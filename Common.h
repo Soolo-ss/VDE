@@ -1,9 +1,11 @@
 #ifndef VDE_COMMON_H
 #define VDE_COMMON_H
 
-#include <event2\event.h>
-#include <boost\filesystem.hpp>
-#include <boost\lockfree\spsc_queue.hpp>
+
+#include <boost/lockfree/spsc_queue.hpp>
+#include <boost/bind.hpp> 
+#include <boost/shared_ptr.hpp>
+#include <boost/asio.hpp>
 
 #include <string>
 
@@ -13,6 +15,9 @@
 
 using std::string;
 using boost::lockfree::spsc_queue;
+using namespace boost::asio;
+using boost::asio::ip::tcp;
+using boost::asio::ip::address;
 
 typedef long int32;
 typedef long long int64;
@@ -27,6 +32,7 @@ struct fileInfo
 	string sendTime_;
 };
 
-typedef spsc_queue<fileInfo, boost::lockfree::capacity<BUFFER_LEN>> Buffer;
+
+typedef spsc_queue<int, boost::lockfree::capacity<BUFFER_LEN> > Buffer;
 
 #endif

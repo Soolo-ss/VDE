@@ -2,9 +2,7 @@
 #define VDE_SERVER_H
 
 #include "Common.h"
-#include <boost\noncopyable.hpp>
-#include <boost\lockfree\spsc_queue.hpp>
-#include <boost\asio.hpp>
+#include <boost/noncopyable.hpp>
  
 class DataProcess;
 class SendProcess;
@@ -17,13 +15,24 @@ public:
 	bool Init();
 
 	void StartUp();
+
+protected:
+	bool AcceptCallback(boost::shared_ptr<tcp::socket> pSocket, const boost::system::error_code& error);
+
 private:
 	string fileName_;
 	short listenPort_;
 	short sendSpeed_;
 	int listenFd_;
 
-	//供处理与发送公用的全局容器(环形缓冲区）
+	boost::atomic<bool> isDone_;
+
+	//boost.asio 閰嶇疆
+	io_service ioService_;
+	tcp::acceptor acceptor_;
+	ip::tcp::endpoint serverAddress_;
+
+	//global Buffer without lock
 	Buffer sendBuffer_;
 
 	DataProcess* dataProcess_;

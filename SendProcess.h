@@ -12,7 +12,7 @@ public:
 
 	}
 
-	void SendData(Buffer& buffer);
+	void SendData(boost::shared_ptr<tcp::socket> pSocket, Buffer& buffer, bool isPreHandDone);
 private:
 	int sendFd_;
 };
