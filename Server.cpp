@@ -28,6 +28,13 @@ bool Server::Init()
 	serverAddress_ = tcp::endpoint(tcp::v4(), listenPort_);
 	boost::system::error_code ec;
 
+	if (acceptor_.open(tcp::v4(), ec))
+	{
+		return false;
+	}
+
+
+
 	acceptor_.bind(serverAddress_, ec);
 
 	if (ec)
@@ -47,6 +54,8 @@ bool Server::Init()
 
 void Server::StartUp()
 {
+	acceptor_.listen(1024);
+
 	boost::shared_ptr<tcp::socket> pSocket(new tcp::socket(ioService_));
 
 	acceptor_.async_accept(*pSocket, boost::bind(&Server::AcceptCallback,
@@ -58,8 +67,8 @@ void Server::StartUp()
 
 	if (isDone_ == false)
 	{
-		dataProcess_->PreHandData(sendBuffer_);
 		isDone_ = true;
+		dataProcess_->PreHandData(sendBuffer_);
 	}
 }
 
@@ -74,12 +83,10 @@ bool Server::AcceptCallback(boost::shared_ptr<tcp::socket> pSocket, const boost:
 		}
 	}
 
-	boost::shared_ptr<tcp::socket> pConn = pSocket;
-
  	//异步调用，不阻塞， 直接返回
 	StartUp();
 
-	sendProcess_->SendData(pConn, sendBuffer_, isDone_);
+	sendProcess_->SendData(pSocket, sendBuffer_, isDone_);
 
 	return true;
 }

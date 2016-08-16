@@ -24,6 +24,7 @@ typedef long long int64;
 
 struct fileInfo
 {
+  fileInfo() : fileSeek_(0) {  }
 	fileInfo(int64 fileSeek, string sendTime)
 		: fileSeek_(fileSeek),
 		  sendTime_(sendTime)
